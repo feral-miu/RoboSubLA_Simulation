@@ -1,0 +1,157 @@
+\documentclass[12pt]{article} 
+
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{titling} 
+\geometry{a4paper, margin=1in} 
+
+\title{RoboSub CSULA Simulation\\
+Software Requirements Specification}
+\author{
+	Christine (lastname ?.?)\\
+	Katha (idkkkk  lastname zzz)\\
+	Jason Giang\\
+	Vee\\
+	}
+\date{September 2026} 
+
+\setlength{\droptitle}{6cm}
+
+\pagestyle{fancy}
+\fancyhead[L]{RoboSub Simulation  SRS}
+\fancyhead[R]{page \thepage}
+\fancyfoot[C]{} 
+
+\begin{document} 
+
+\begin{titlepage} 
+\maketitle
+\thispagestyle{empty} 
+\end{titlepage} 
+
+\thispagestyle{empty} 
+\tableofcontents
+\newpage 
+
+\section*{Revision History} 
+\begin{center} 
+\begin{tabular}{|p{3cm}|p{3cm}|p{3cm}|p{3cm}|p{3cm}|}
+\hline
+\textbf{Name} & \textbf{Version} & \textbf{Description} & \textbf{Date}\\ 
+\hline
+Vee & v0.0 & Initial draft of the Software Requirements Specification (SRS) & Sep 17, 2026\\
+\hline 
+
+\end{tabular}
+\end{center} 
+
+\newpage 
+\section{Introduction} 
+
+\subsection{Purpose} 
+The purpose of this Software Requirements Specification (SRS) is to describe various initial requirements for the RoboSub CSULA Simulation system as of September 17th. This document will define initial baseline requirements, the scope of the simulation system, and potential system architecture. As a living document, the purpose of the document is to provide a shared overview of potential technologies used by the development team, while exploring other potential frameworks for the simulation engine. 
+
+\subsection{Intended Audience} 
+This document is intended for: 
+\begin{itemize} 
+	\item \textbf{Website/Simulation Development Team}
+	\item \textbf{Control/Navigation Development Team} 
+	\item \textbf{Computer Vision Development Team} 
+	\item \textbf{Instructors} 
+	\item \textbf{Potential Testers from RoboSubLA Club Team} 
+\end{itemize} 
+
+\subsection{Intended Use} 
+The intended use is to accurately simulate RoboSub controls, navigation, and movement realistically in an underwater environment. The simulation could communicate with the Robotic Operating System (ROS) (I assume ROS is the operating system we will use) to accurately simulate the RoboSub Senior Design Team's sub and possibly the RoboSubLA club's sub. 
+
+\subsection{Product Scope} 
+\subsubsection{In-Scope}
+\begin{itemize} 
+	\item Simulating fluid density, buoyancy vectors, drag, effects on the RoboSub hull, etc.
+	\item Constant/variable water current vectors that the RoboSub must counteract. 
+	\item Underwater gates, buoys, trenches, courses to follow, etc. 
+	\item Sensor simulation 
+\end{itemize} 
+\subsubsection{Out of Scope} 
+\begin{itemize} 
+	\item Simulated course is strictly underwater, so air-water physics and surface waves may not be needed
+	\item Structural damage from extreme depths should not need to be simulated 
+	\item The environment will focus on course navigation course 
+\end{itemize} 
+
+\subsection{Definitions and Acronyms} 
+\begin{itemize} 
+	\item \textbf{ROS} — Robotic Operation System 
+	\item \textbf{CSULA} — California State University, Los Angeles 
+	\item \textbf{AUV} — Autonomous Underwater Vehicle 
+	\item \textbf{RoboSub} — Autonomous Robotic Submarine
+	\item \textbf{RoboSub Competition} — Yearly national RoboSub competition provided by RoboNation
+\end{itemize} 
+
+\newpage
+\section{Overall Description} 
+
+\subsection{User Needs} 
+The primary users consist of the RoboSubLA Senior Design team. (Control/Navigation Team, Computer Vision Team, Website/Simulation Team)\\
+The secondary users consist of instructors and the RoboSubLA Club team. 
+
+\subsection{Dependencies} 
+\subsubsection{Core Framework Dependencies} 
+Utilizing the Stonefish C++ library would add the following dependencies: 
+\begin{itemize} 
+	\item \textbf{Bullet Physics Library} — Used with Stonefish to provide rigid-body dynamics and collisions. 
+	\item \textbf{OpenGL Mathematics} — Handles 3D math matrices for sub orientation. 
+	\item \textbf{SDL2 (libsdl2-dev)} — Framework for application windows, keyboard inputs, and time loop tracking. 
+	\item \textbf{Freetype (libfreetype6-dev)} —  Renders 2D on-screen text. 
+\end{itemize} 
+\subsubsection{Communication and Bridge Dependencies} 
+\begin{itemize} 
+	\item \textbf{Stonefish ROS2 Wrapper} — Provides communication with RoboSub OS. 
+	\item \textbf{uWebSockets} — Provides a WebSocket server to communicate with the RoboSubLA website 
+	\item \textbf{Serialization Dependency} — Converts sensor and other data from simulation into JSON for the RoboSubLA website.
+\end{itemize} 
+
+\subsection{Hardware Requirements} 
+\begin{itemize} 
+	\item \textbf{Ubuntu 22.04 LTS (Jammy Jellyfish)} — Ubuntu OS provides the least friction regarding compatibility and access to many community libraries, plugins, etc. 
+	\item \textbf{Graphics Hardware} — Modern graphics hardware that supports OpenGL 4.3 or higher. 
+	\item \textbf{Processor Hardware} — Modern multi-core CPU capable of running the Stonefish physics engine. 
+\end{itemize} 
+
+\newpage 
+\section{System Features and Requirements} 
+
+\subsection{Functional Requirements} 
+\begin{itemize} 
+	\item The simulation creates a 3D water environment capable of realistic underwater physics, currents, buoyancy, and drag. 
+	\item The simulation loads custom course maps with obstacles such as gates, trenches, and buoys to track, etc. 
+	\item The simulation runs from start to finish. 
+	\item Data stream to the website, tracking sensor data through JSON. 
+	\item The simulation opens a WebSocket, allowing for remote commands or possibly a built-in web dashboard. 
+	\item "Invisible" mode that simulates in text-only mode for low-performance hardware and quick, simple tests. 
+\end{itemize} 
+
+\subsection{Non-Functional Requirements} 
+\begin{itemize} 
+	\item The simulation handles physics smoothly, performing C++ physics loops running at roughly 100 times per second. 
+	\item Instant streaming to web apps. (Under 50 milliseconds) 
+	\item Smooth visuals. 
+	\item Simple installation and Windows compatibility. 
+\end{itemize} 
+
+\newpage 
+\section{Other Requirements} 
+
+\newpage 
+\section{Appendix A: Glossary} 
+
+\newpage
+\section{Appendix B: Something} 
+
+\newpage
+\section{Appendix C: Another Thing} 
+
+\end{document} 
+
+	
