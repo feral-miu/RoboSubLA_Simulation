@@ -41,6 +41,7 @@ Software Requirements Specification}
 \textbf{Name} & \textbf{Version} & \textbf{Description} & \textbf{Date}\\ 
 \hline
 Vee & v0.0 & Initial draft of the Software Requirements Specification (SRS) & Sep 17, 2026\\
+Vee & v0.1 & Updated inaccurate placeholder requirements to accurately reflect project dependencies & Oct 15, 2026\\
 \hline 
 
 \end{tabular}
@@ -63,7 +64,7 @@ This document is intended for:
 \end{itemize} 
 
 \subsection{Intended Use} 
-The intended use is to accurately simulate RoboSub controls, navigation, and movement realistically in an underwater environment. The simulation could communicate with the Robotic Operating System (ROS) (I assume ROS is the operating system we will use) to accurately simulate the RoboSub Senior Design Team's sub and possibly the RoboSubLA club's sub. 
+The intended use is to accurately simulate RoboSub controls, navigation, and movement realistically in an underwater environment. The simulation could communicate with the Robotic Operating System (ROS 2 Humble) to accurately simulate the RoboSub Senior Design Team's sub and possibly the RoboSubLA club's sub. 
 
 \subsection{Product Scope} 
 \subsubsection{In-Scope}
@@ -97,19 +98,20 @@ The primary users consist of the RoboSubLA Senior Design team. (Control/Navigati
 The secondary users consist of instructors and the RoboSubLA Club team. 
 
 \subsection{Dependencies} 
-\subsubsection{Core Framework Dependencies} 
-Utilizing the Stonefish C++ library would add the following dependencies: 
+\subsubsection{Core Framework and Simulation Dependencies} 
+Utilizing the ROS 2 Humble Hawksbill framework and Gazebo Fortress simulation engine requires the following dependencies: 
 \begin{itemize} 
-	\item \textbf{Bullet Physics Library} — Used with Stonefish to provide rigid-body dynamics and collisions. 
-	\item \textbf{OpenGL Mathematics} — Handles 3D math matrices for sub orientation. 
-	\item \textbf{SDL2 (libsdl2-dev)} — Framework for application windows, keyboard inputs, and time loop tracking. 
-	\item \textbf{Freetype (libfreetype6-dev)} —  Renders 2D on-screen text. 
-\end{itemize} 
+	\item \textbf{ROS 2 Humble Hawksbill (Desktop / Base)} — Provides the underlying robotic middleware, communication channels, and developer command-line tools. 
+	 \item \textbf{Gazebo Fortress (Ignition edition)} — 3D physics simulator.
+	\item \textbf{OGRE 3D Rendering Engine (v2.x)} — Used by Gazebo to manage 3D visualization, virtual camera sensors, and illumination.
+	\item \textbf{Python 3 (NumPy Module)} —  Performs real-time geometric matrix manipulations and image processing array operations.
+	\end{itemize} 
 \subsubsection{Communication and Bridge Dependencies} 
 \begin{itemize} 
-	\item \textbf{Stonefish ROS2 Wrapper} — Provides communication with RoboSub OS. 
-	\item \textbf{uWebSockets} — Provides a WebSocket server to communicate with the RoboSubLA website 
-	\item \textbf{Serialization Dependency} — Converts sensor and other data from simulation into JSON for the RoboSubLA website.
+	\item \textbf{ROS-Gz Bridge (ros-humble-ros-gz)} — A bidirectional translation layer that maps native Gazebo simulation physics events, sensors, and actuator inputs to standardized ROS 2 messaging topics
+	\item \textbf{rosbridge\_suite (rosbridge\_server)} — Provides a high-performance WebSocket server that exposes the internal ROS 2 data highway over standard network sockets. This enables the RoboSubLA web application to directly monitor simulation state data.
+	\item \textbf{JSON Serialization Protocol} — Implemented natively via standard ROS web tools to automatically convert complex internal sensor arrays and vehicle odometry structures into JSON payloads for lightweight, real-time WebSocket broadcasting.
+	\item \textbf{rosdep Package Utility}  — A system dependency tool used to automatically map, translate, and install regional workspace prerequisites against the native Ubuntu package manager.
 \end{itemize} 
 
 \subsection{Hardware Requirements} 
@@ -134,7 +136,7 @@ Utilizing the Stonefish C++ library would add the following dependencies:
 
 \subsection{Non-Functional Requirements} 
 \begin{itemize} 
-	\item The simulation handles physics smoothly, performing C++ physics loops running at roughly 100 times per second. 
+	\item The simulation handles physics smoothly, performing physics loops running at roughly 100 times per second. 
 	\item Instant streaming to web apps. (Under 50 milliseconds) 
 	\item Smooth visuals. 
 	\item Simple installation and Windows compatibility. 
